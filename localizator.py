@@ -35,7 +35,7 @@ except ImportError:
     print("Cannot parse")
 
 SCOPES = 'https://www.googleapis.com/auth/drive'
-CLIENT_SECRET_FILE = 'secret.json'
+CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
 
 def get_credentials():
