@@ -2,8 +2,9 @@
 Download and format your Drive sheet to iOS or Android localized file
 
 ## Google Drive API KEY
-To use the localizator, you must have your own **free** Google Drive API key.
-To get one, visit https://console.developers.google.com/apis/credentials, create a Project, select *Activate API* and create credentials for OAuth. The type of the application should be "Other"
+If you don't have already an API key ( and you certainly don't ) visit https://developers.google.com/drive/v3/web/quickstart/python
+Follow the Step 1 and 2.
+You now have to move the *client_secret.json file into the localizator folder*.
 
 
 ##Dependencies
