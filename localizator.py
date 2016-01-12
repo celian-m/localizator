@@ -116,10 +116,9 @@ def main():
         translations.translate_android(filename, args.path)
     else:
         print("Invalid platform. type --help for help")
-
-    print(repr(args.keep_csv))
     if not args.keep_csv:
         os.remove(filename)
+    print("Your files have been generated under '"+args.path+"'")
 
 def download_file(service, drive_file):
     download_url = drive_file['exportLinks']['text/csv']

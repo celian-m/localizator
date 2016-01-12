@@ -5,23 +5,23 @@ def translate(file, path):
     csv_file = open(file, 'r')
     csv_reader = csv.reader(csv_file, delimiter=',')
 
-    locales = [{'identifier' : 'fr', 'column' : 3}]
-    if not os.path.exists(path+'fr.lproj'):
-        os.makedirs(path+'fr.lproj')
-    if not os.path.exists(path+'en.lproj'):
-        os.makedirs(path+'en.lproj')
+    locales = [
+        {'identifier' : 'fr', 'column' : 3},
+        {'identifier' : 'en', 'column' : 5}
+                ]
 
-    fr = open(path+'fr.lproj/Localizable.strings','w')
-    en = open(path+'en.lproj/Localizable.strings','w')
 
-    for row in csv_reader:
-        if len(row[1]) > 0 and len(row[3]) > 0:
-            fr.write("\""+row[1]+"\"=\""+escape(row[3])+"\";\n")
-        if len(row[1]) > 0 and len(row[5]) > 0:
-            en.write("\""+row[1]+"\"=\""+escape(row[5])+"\";\n")
+    for aLocale in locales:
+        if not os.path.exists(path+aLocale['identifier']+'.lproj'):
+            os.makedirs(path+aLocale['identifier']+'.lproj')
 
-    fr.close()
-    en.close()
+        file = open(path+aLocale['identifier']+'.lproj/Localizable.strings','w')
+        for row in csv_reader:
+            #Sample Code - You should override it
+                key = row[1]
+                value = row[aLocale['column']]
+                file.write("\""+key+"\"=\""+escape(value)+"\";\n")
+        file.close()
 
 
 def escape(str):
