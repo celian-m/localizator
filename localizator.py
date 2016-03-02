@@ -5,9 +5,7 @@ try:
 except ImportError:
     print("run pip3 install httplib2")
 
-
 import os
-
 
 try:
     from apiclient import discovery
@@ -20,16 +18,17 @@ from oauth2client import client
 from oauth2client import tools
 import translations
 
-
 try:
     import argparse
+
     parser = argparse.ArgumentParser(parents=[tools.argparser], description='Create localizable files')
     parser.add_argument('--id', help='provide file id to avoid prompt')
     parser.add_argument('--path', help='Path destination for *.lproj folders', default='./')
-    parser.add_argument('--platform',choices=['ios', 'android'], help='Should be either ios or android', default='ios')
-    parser.add_argument('--keep_csv',type=bool, help='Should keep the CSV file on the disk', default=False)
+    parser.add_argument('--platform', choices=['ios', 'android'], help='Should be either ios or android', default='ios')
+    parser.add_argument('--gid', help='Use the Google sheet ID from the end of the url link')
+    parser.add_argument('--keep_csv', type=bool, help='Should keep the CSV file on the disk', default=False)
     args = parser.parse_args()
-    flags=args
+    flags = args
 except ImportError:
     flags = None
     print("Cannot parse")
@@ -37,6 +36,7 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
+
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -51,8 +51,7 @@ def get_credentials():
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'drive-python-quickstart.json')
+    credential_path = os.path.join(credential_dir, 'drive-python-quickstart.json')
 
     store = oauth2client.file.Storage(credential_path)
     credentials = store.get()
@@ -61,7 +60,7 @@ def get_credentials():
         flow.user_agent = APPLICATION_NAME
         if flags:
             credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
+        else:  # Needed only for compatibility with Python 2.6
             credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
@@ -75,6 +74,7 @@ def getFiles(service):
     else:
         return service, items
 
+
 def main():
     """Shows basic usage of the Google Drive API.
 
@@ -84,10 +84,9 @@ def main():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v2', http=http)
-    service , files = getFiles(service)
+    service, files = getFiles(service)
 
     i = 0
-
 
     if (args.id):
         for item in files:
@@ -95,19 +94,19 @@ def main():
                 file = item
     else:
         for item in files:
-            print("["+str(i)+"] "+str(item['title'])+" - "+str(item['id']))
-            i+=1
-        isDigit=False
-        while not isDigit :
-            _file  = input("Select a file index: \n")
+            print("[" + str(i) + "] " + str(item['title']) + " - " + str(item['id']))
+            i += 1
+        isDigit = False
+        while not isDigit:
+            _file = input("Select a file index: \n")
             isDigit = _file.isdigit()
             if int(_file) > len(files) or int(_file) < 0:
                 print("Invalid index supplied. Try again")
                 isDigit = False
         file = files[int(_file)]
     content = download_file(service, file)
-    filename =  file['id']+'.csv'
-    csvf = open(filename,'w')
+    filename = file['id'] + '.csv'
+    csvf = open(filename, 'w')
     csvf.write(content.decode("utf-8"))
     csvf.close()
     if args.platform == 'ios':
@@ -121,8 +120,11 @@ def main():
     if not args.keep_csv:
         os.remove(filename)
 
+
 def download_file(service, drive_file):
     download_url = drive_file['exportLinks']['text/csv']
+    if args.gid:
+        download_url += "&gid=" + args.gid
     if download_url:
         resp, content = service._http.request(download_url)
         if resp.status == 200:
@@ -131,8 +133,9 @@ def download_file(service, drive_file):
             print('An error occurred: %s' % resp)
             return None
     else:
-    # The file doesn't have any content stored on Drive.
+        # The file doesn't have any content stored on Drive.
         return None
+
 
 if __name__ == '__main__':
     main()
