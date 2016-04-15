@@ -29,6 +29,7 @@ I recommend you to create a `localizator.sh` file containing your command line
 
 Exemple :
 ```shell
+#localizator.sh
 python3 localizator/localyzator.py --id=MY_SHEET_ID --path=PATH_TO_RESSOURCE
 ```
 
