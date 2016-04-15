@@ -37,6 +37,8 @@ Then in your `bash_profile` add the `Localize` alias as following :
 
 ```shell
 echo "alias Localize='sh localizator.sh'" >> ~/.bash_profile
+#update your settings
+source ~/.bash_profile
 ```
 
 Now, simply run `Localize` from your workspace!
