@@ -42,3 +42,41 @@ source ~/.bash_profile
 ```
 
 Now, simply run `Localize` from your workspace!
+
+
+##iOS components
+### Localizator.swift
+
+Use Localizator.swift to download your Localizable strings from a distant server. It allow you to change your strings files while your app is on the appstore.
+
+####Download
+```swift
+Localizator.synchronize { (success) in
+            //Do some stuff here, like dismissing loader
+ }
+```
+
+####Usage
+Now you simply have to use the `Localizator.localizedString` function to localize your text.
+
+```
+//Exemple of strings file
+"Hello" = "Bonjour";
+```
+
+```swift
+myLabel.text = Localizator.localizedString("Hello")
+//You can also do myLabel.text = l("Hello")
+//myLabel.text will be "Bonjour"
+```
+
+
+
+###LocalizedComponents.swift
+
+Localized components are groups of UIComponentns ( as UILabel, UIButton, UITextfield...) which have some additionnal (IBInspectable) attributes.
+
+For example, in you xib/storybord file, you can set the `localizedText` from `LocalizedLabel`. At the runtime, the `localizedText` will be replace by his localized value using the `Localizator.localizedString` function
+
+
+
