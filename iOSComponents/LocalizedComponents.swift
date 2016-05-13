@@ -16,6 +16,12 @@ func l( string : String) -> String {
     return Localizator.localizedString(string)
 }
 
+prefix func ~ (string: String) -> String {
+    return l(string)
+}
+
+
+
 @objc public class LocalizedLabel: UILabel {
     @IBInspectable public var localizedText : String = "" {
         didSet {
