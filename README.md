@@ -66,6 +66,9 @@ Now you simply have to use the `Localizator.localizedString` function to localiz
 
 ```swift
 myLabel.text = Localizator.localizedString("Hello")
+//OR
+myLabel.text = ~"Hello"
+
 //You can also do myLabel.text = l("Hello")
 //myLabel.text will be "Bonjour"
 ```
