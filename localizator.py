@@ -67,7 +67,7 @@ def get_credentials():
 
 
 def getFiles(service):
-    results = service.files().list(maxResults=10).execute()
+    results = service.files().list().execute()
     items = results.get('items', [])
     if not items:
         print('No files found.')
