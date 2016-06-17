@@ -43,7 +43,7 @@ class Localizator: NSObject {
      if the key is not in localized files and not in embedded strings files, the key is returned
      */
     static func localizedString(key : String, locale : String = "en") -> String {
-        let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first
+        let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.CachesDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first
         let path = NSURL(fileURLWithPath: dir!).URLByAppendingPathComponent("localizator-\(locale).lproj")
         let bundle = NSBundle(URL:path)
         let s = NSLocalizedString(key, tableName: nil, bundle: bundle!, value: unknowKey, comment: "")
@@ -72,7 +72,7 @@ class Localizator: NSObject {
             
             let task = session.dataTaskWithRequest(request) { (data, response, error) in
                 if data != nil {
-                    let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first
+                    let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.CachesDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first
                     var path = NSURL(fileURLWithPath: dir!).URLByAppendingPathComponent("localizator-\(locale).lproj")
                     do {
                         if !NSFileManager.defaultManager().fileExistsAtPath(path.path!){

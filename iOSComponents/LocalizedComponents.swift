@@ -13,8 +13,15 @@ import UIKit
 let _underline_height : CGFloat = 4
 /** Shorthand for NSLocalizedStirng*/
 func l( string : String) -> String {
+    
+    var locale = NSLocale.currentLocale().localeIdentifier
+    if (locale.characters.count > 2) {
+        locale = locale.substringToIndex(locale.startIndex.advancedBy(2))
+        return Localizator.localizedString(string, locale: locale)
+    }
     return Localizator.localizedString(string)
 }
+
 
 prefix func ~ (string: String) -> String {
     return l(string)
@@ -240,4 +247,21 @@ public class LocalizedTextField: UITextField {
 
 
 
+
+public class LocalizedBarButtonItem: UIBarButtonItem {
+    
+    @IBInspectable public var localizedTitle : String = "" {
+        didSet {
+            self.reload()
+        }
+    }
+    
+    
+    func reload(){
+        let str = l(self.localizedTitle)
+        self.title = str
+        self.setTitleTextAttributes([NSForegroundColorAttributeName : UIColor.whiteColor(), NSFontAttributeName : kRegularFontOfSize(14) ], forState: .Normal)
+    }
+    
+}
 
