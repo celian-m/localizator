@@ -2,6 +2,7 @@ from __future__ import print_function
 
 try:
     import httplib2
+    from apiclient import errors
 except ImportError:
     print("run pip3 install httplib2")
 
@@ -67,12 +68,31 @@ def get_credentials():
 
 
 def getFiles(service):
-    results = service.files().list().execute()
-    items = results.get('items', [])
-    if not items:
-        print('No files found.')
-    else:
-        return service, items
+    """
+    Retrieve a list of File resources.
+    Args:
+    service: Drive API service instance.
+    Returns:
+    List of File resources.
+    """
+    result = []
+    page_token = None
+    while True:
+        try:
+            param = {}
+            if page_token:
+                param['pageToken'] = page_token
+                param['maxResults'] = '1000'
+            files = service.files().list(**param).execute()
+
+            result.extend(files['items'])
+            page_token = files.get('nextPageToken')
+            if not page_token:
+                break
+        except errors.HttpError as error:
+            print('An error occurred: %s' % error )
+            break
+    return service, result
 
 
 def main():
@@ -88,7 +108,7 @@ def main():
 
     i = 0
 
-    if (args.id):
+    if args.id:
         for item in files:
             if item['id'] == args.id:
                 file = item
