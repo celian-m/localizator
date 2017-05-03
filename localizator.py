@@ -98,7 +98,6 @@ def getFiles(service):
 def download__file_metadata(service, file_id):
     file_id = file_id
     request = service.files().export_media(fileId=file_id, mimeType='text/csv').execute()
-    print(request)
     return request
 
 def main():
