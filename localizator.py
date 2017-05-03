@@ -95,6 +95,12 @@ def getFiles(service):
     return service, result
 
 
+def download__file_metadata(service, file_id):
+    file_id = file_id
+    request = service.files().export_media(fileId=file_id, mimeType='text/csv').execute()
+    print(request)
+    return request
+
 def main():
     """Shows basic usage of the Google Drive API.
 
@@ -104,28 +110,20 @@ def main():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v2', http=http)
-    service, files = getFiles(service)
+
 
     i = 0
-
     if args.id:
-        for item in files:
-            if item['id'] == args.id:
-                file = item
+        file = download__file_metadata(service, args.id)
     else:
+        service, files = getFiles(service)
         for item in files:
-            print("[" + str(i) + "] " + str(item['title']) + " - " + str(item['id']))
+            print(str(item['title']) + " - " + str(item['id']))
             i += 1
-        isDigit = False
-        while not isDigit:
-            _file = input("Select a file index: \n")
-            isDigit = _file.isdigit()
-            if int(_file) > len(files) or int(_file) < 0:
-                print("Invalid index supplied. Try again")
-                isDigit = False
-        file = files[int(_file)]
-    content = download_file(service, file)
-    filename = file['id'] + '.csv'
+        exit(1)
+
+    content = file
+    filename = "tmp" + '.csv'
     csvf = open(filename, 'w')
     csvf.write(content.decode("utf-8"))
     csvf.close()
