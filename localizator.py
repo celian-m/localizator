@@ -2,6 +2,7 @@ from __future__ import print_function
 
 try:
     import httplib2
+    import urllib3
     from apiclient import errors
 except ImportError:
     print("run pip3 install httplib2")
@@ -41,10 +42,8 @@ APPLICATION_NAME = 'Drive API Python Quickstart'
 
 def get_credentials():
     """Gets valid user credentials from storage.
-
     If nothing has been stored, or if the stored credentials are invalid,
     the OAuth2 flow is completed to obtain the new credentials.
-
     Returns:
         Credentials, the obtained credential.
     """
@@ -58,6 +57,7 @@ def get_credentials():
     credentials = store.get()
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+
         flow.user_agent = APPLICATION_NAME
         if flags:
             credentials = tools.run_flow(flow, store, flags)
@@ -90,31 +90,35 @@ def getFiles(service):
             if not page_token:
                 break
         except errors.HttpError as error:
-            print('An error occurred: %s' % error )
+            print('An error occurred: %s' % error)
             break
     return service, result
 
 
-def download__file_metadata(service, file_id):
+def download__file_metadata(file_id, token, gid=0):
     file_id = file_id
-    request = service.files().export_media(fileId=file_id, mimeType='text/csv').execute()
-    return request
+    url = "https://docs.google.com/spreadsheets/d/"+file_id+"/export?gid="+str(gid)+"&format=csv"
+
+    headers = {"Authorization": "Bearer "+str(token)}
+    r = urllib3.PoolManager().request('GET', url=url, headers=headers)
+    return r.data
 
 def main():
     """Shows basic usage of the Google Drive API.
-
     Creates a Google Drive API service object and outputs the names and IDs
     for up to 10 files.
     """
     credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('drive', 'v2', http=http)
 
 
-    i = 0
+    credentials.authorize(httplib2.Http())
+    token = str(credentials.access_token)
+
+
     if args.id:
-        file = download__file_metadata(service, args.id)
+        file = download__file_metadata(args.id, token, args.gid)
     else:
+        i = 0
         service, files = getFiles(service)
         for item in files:
             print(str(item['title']) + " - " + str(item['id']))
